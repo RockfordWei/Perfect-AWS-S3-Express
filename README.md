@@ -11,3 +11,5 @@ let bytes = try AWS.S3.download(access, bucket: bucket, region: region, file: fi
 // delete
 try AWS.S3.delete(access, bucket: bucket, region: region, file: fileName, contentType: contentType)
 ```
+
+You can use `Threading.dispatch { }` if need.
