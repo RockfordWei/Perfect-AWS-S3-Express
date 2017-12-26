@@ -49,6 +49,8 @@ open class AWS {
       "us-west-1": "s3-us-west-1.amazonaws.com",
       "us-west-2": "s3-us-west-2.amazonaws.com",
       "eu-west-1": "s3-eu-west-1.amazonaws.com",
+      "eu-west-2": "s3-eu-west-2.amazonaws.com",
+      "eu-west-3": "s3-eu-west-3.amazonaws.com",
       "eu-central-1": "s3.eu-central-1.amazonaws.com",
       "ap-south-1": "s3.ap-south-1.amazonaws.com",
       "ap-southeast-1": "s3-ap-southeast-1.amazonaws.com",
