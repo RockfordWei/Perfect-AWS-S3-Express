@@ -73,38 +73,46 @@ open class AWS {
             
             access.update()
             
-            let header = "\(method)\n"
-                + "/\(file)\n"
-                + "\n"
-                + "host:\(bucket).\(host)\n"
-                + "x-amz-date:\(access.timestamp)\n"
-                + "\n"
-                + "host;x-amz-date\n"
-                + "UNSIGNED-PAYLOAD"
+            let header = """
+            \(method)
+            /\(file)
+            
+            host:\(bucket).\(host)
+            x-amz-date:\(access.timestamp)
+            
+            host;x-amz-date
+            UNSIGNED-PAYLOAD
+            """
             
             guard let headerDigest = header.digest(.sha256)?.encode(.hex) else {
-                throw Exception.InvalidHeader
+                throw Exception.CannotSign
             }
             
             let headerDigestString = String(cString: headerDigest)
             
-            let stringToSign = "AWS4-HMAC-SHA256\n"
-                + "\(access.timestamp)\n"
-                + "\(access.date)/\(region)/s3/aws4_request\n"
-                + "\(headerDigestString)"
+            let stringToSign = """
+            AWS4-HMAC-SHA256
+            \(access.timestamp)
+            \(access.date)/\(region)/s3/aws4_request
+            \(headerDigestString)
+            """
             
             let awsSecretKey = "AWS4"+access.secret
-            let kDate = access.date.sign(.sha256, key: HMACKey(awsSecretKey))
-            let kRegion = region.sign(.sha256, key: HMACKey(kDate!))
-            let kService = "s3".sign(.sha256, key: HMACKey(kRegion!))
-            let kSigning = "aws4_request".sign(.sha256, key: HMACKey(kService!))
-            let signature = stringToSign.sign(.sha256, key: HMACKey(kSigning!))
-            let signatureString = String(cString: signature!.encode(.hex)!)
-            let authorization = "AWS4-HMAC-SHA256 Credential=\(access.key)/\(access.date)/\(region)/s3/aws4_request, SignedHeaders=host;x-amz-date, Signature=\(signatureString)"
             
+            guard let kDate = access.date.sign(.sha256, key: HMACKey(awsSecretKey)),
+                let kRegion = region.sign(.sha256, key: HMACKey(kDate)),
+                let kService = "s3".sign(.sha256, key: HMACKey(kRegion)),
+                let kSigning = "aws4_request".sign(.sha256, key: HMACKey(kService)),
+                let signature = stringToSign.sign(.sha256, key: HMACKey(kSigning)),
+                let signatureBytes = signature.encode(.hex) else {
+                    throw Exception.CannotSign
+            }
+            
+            let signatureString = String(cString: signatureBytes)
+            let authorization = "AWS4-HMAC-SHA256 Credential=\(access.key)/\(access.date)/\(region)/s3/aws4_request, SignedHeaders=host;x-amz-date, Signature=\(signatureString)"
             let url = "https://\(bucket).\(host)/\(file)"
             let curl = CURL(url: url)
-            
+
             if AWS.debug {
                 _ = curl.setOption(CURLOPT_VERBOSE, int: 1)
                 _ = curl.setOption(CURLOPT_STDERR, v: stdout)
