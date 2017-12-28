@@ -47,6 +47,7 @@ open class AWS {
         case UnknownHost
         case InvalidFile
         case InvalidHeader
+        case CannotSign
     }
     
     open class S3 {
