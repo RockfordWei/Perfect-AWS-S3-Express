@@ -3,8 +3,9 @@
 import PackageDescription
 
 let package = Package(
-    name: "PerfectAWS",
-    dependencies: [
-      .Package(url: "https://github.com/PerfectlySoft/Perfect-CURL.git", majorVersion: 2)
-    ]
+	name: "PerfectAWS",
+    	targets: [],
+	dependencies: [
+      		.Package(url: "https://github.com/PerfectlySoft/Perfect-CURL.git", majorVersion: 3)
+    	]
 )
