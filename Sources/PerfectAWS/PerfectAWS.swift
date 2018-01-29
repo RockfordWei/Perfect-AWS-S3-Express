@@ -32,16 +32,6 @@ open class AWS {
             update()
         }
         
-//        public func signV4(_ string: String, _ key: HMACKey) -> String {
-//            var bytes = string.sign(.sha256, key: key)?.encode(.base64)
-//            bytes?.append(0)
-//            if let b = bytes {
-//                return String(cString: b)
-//            } else {
-//                return ""
-//            }
-//        }
-        
         public func signV4(_ region: String, _ headerDigest: String) throws -> String {
             let stringToSign = """
             AWS4-HMAC-SHA256
@@ -93,7 +83,6 @@ open class AWS {
         ]
         
         private static func prepare(_ access: Access, method: String, bucket: String, region: String, file: String, contentType: String) throws -> (CURL, UnsafeMutablePointer<curl_slist>) {
-            print(#function)
             guard let host = hosts[region] else {
                 throw Exception.UnknownHost
             }
