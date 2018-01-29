@@ -1,6 +1,9 @@
+test.sh
+test.log
 .DS_Store
 /.bui*
 /Packages
 /*.xcodeproj
 /*.pins
+/*.resolved
 /*.linux
