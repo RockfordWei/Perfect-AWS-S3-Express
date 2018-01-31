@@ -34,20 +34,7 @@ class PerfectAWSTests: XCTestCase {
   }
   
   func testSign() {
-//    let acs = access
-//    acs.timestamp = "Sun, 27 Aug 2017 00:11:23 -0400"
-//    let contentType = "text/plain"
-//    let resource = "/fishpool/hello.txt"
-//    let tosign = "GET\n\n\(contentType)\n\(acs.timestamp)\n\(resource)"
-//    let signed = acs.signV4(tosign, <#HMACKey#>)
-//    print(tosign)
-//    print(signed)
-//    XCTAssertEqual(signed, "tlQWvHiCkl7AISfp+tKWCWe2QXw=")
-    
-    let b = "elyot-sandbox"
-    let r = "eu-west-3"
-    
-    guard let host = AWS.S3.hosts[r] else {
+    guard let host = AWS.S3.hosts[region] else {
         return
     }
     
@@ -59,7 +46,7 @@ class PerfectAWSTests: XCTestCase {
     GET
     /fishpool/hello.txt
     
-    host:\(b).\(host)
+    host:\(bucket).\(host)
     x-amz-date:\(acs.timestamp)
     
     host;x-amz-date
