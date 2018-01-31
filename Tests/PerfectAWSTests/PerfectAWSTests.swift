@@ -44,18 +44,22 @@ class PerfectAWSTests: XCTestCase {
 //    print(signed)
 //    XCTAssertEqual(signed, "tlQWvHiCkl7AISfp+tKWCWe2QXw=")
     
-    guard let host = AWS.S3.hosts[region] else {
+    let b = "elyot-sandbox"
+    let r = "eu-west-3"
+    
+    guard let host = AWS.S3.hosts[r] else {
         return
     }
     
     let acs = access
     access.timestamp = "20180129T101809Z"
+    access.date = "20180129"
     
     let header = """
     GET
     /fishpool/hello.txt
     
-    host:\(bucket).\(host)
+    host:\(b).\(host)
     x-amz-date:\(acs.timestamp)
     
     host;x-amz-date
