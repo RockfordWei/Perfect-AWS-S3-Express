@@ -128,6 +128,7 @@ open class AWS {
                     throw Exception.InvalidHeader
                 }
                 _ = curl.setOption(CURLOPT_HTTPHEADER, v: list)
+                
                 return (curl, list)
             } catch {
                 throw Exception.CannotSign
