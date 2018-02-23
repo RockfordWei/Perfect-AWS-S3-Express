@@ -217,7 +217,16 @@ open class AWS {
                 }
             })
             
-            let (code, _, _) = curl.performFully()
+            let (code, headerBytes, bodyBytes) = curl.performFully()
+            let headerData = Data(bytes: headerBytes)
+            let bodyData = Data(bytes: bodyBytes)
+            
+            if AWS.debug {
+                if let header = String(data: headerData, encoding: .utf8), let body = String(data: bodyData, encoding: .utf8) {
+                    print(header, body)
+                }
+            }
+            
             guard code == 0 else {
                 throw Exception.InvalidFile
             }

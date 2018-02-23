@@ -72,14 +72,16 @@ class PerfectAWSTests: XCTestCase {
   func testSample() {
     do {
 
-      try AWS.S3.upload(access, bucket: bucket, region: region, file: fileName, contentType: contentType)
+        let toPath = "users/5a901bad64ef7e44b4368836/profile.jpeg"
+        
+        try AWS.S3.upload(access, bucket: bucket, region: region, file: fileName, toPath: toPath, contentType: contentType)
 
-      var bytes = try AWS.S3.download(access, bucket: bucket, region: region, file: fileName, contentType: contentType)
+      var bytes = try AWS.S3.download(access, bucket: bucket, region: region, file: toPath, contentType: contentType)
       bytes.append(0)
       let string = String(cString: bytes)
       XCTAssertEqual(string, fileContent)
 
-      try AWS.S3.delete(access, bucket: bucket, region: region, file: fileName, contentType: contentType)
+      try AWS.S3.delete(access, bucket: bucket, region: region, file: toPath, contentType: contentType)
     }catch{
       XCTFail(error.localizedDescription)
     }
