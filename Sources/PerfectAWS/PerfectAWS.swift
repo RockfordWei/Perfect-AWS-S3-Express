@@ -191,6 +191,38 @@ open class AWS {
             }
             curl_slist_free_all(headers)
         }
+        
+        public static func upload(_ access: Access, bucket: String, region: String, file: String, toPath: String, contentType: String) throws {
+            
+            var fileInfo = stat()
+            stat(file, &fileInfo)
+            
+            guard fileInfo.st_size > 0,
+                let fpointer = fopen(file, "rb") else {
+                    throw Exception.InvalidFile
+            }
+            
+            let (curl, headers) = try prepare(access, method: "PUT", bucket: bucket, region: region, file: toPath, contentType: contentType)
+            
+            _ = curl.setOption(CURLOPT_INFILESIZE_LARGE, int: fileInfo.st_size)
+            _ = curl.setOption(CURLOPT_READDATA, v: fpointer)
+            _ = curl.setOption(CURLOPT_UPLOAD, int: 1)
+            _ = curl.setOption(CURLOPT_PUT, int: 1)
+            _ = curl.setOption(CURLOPT_READFUNCTION, f: { ptr, size, nitems, stream in
+                if let fstream = stream {
+                    let f = fstream.assumingMemoryBound(to: FILE.self)
+                    return fread(ptr, size, nitems, f)
+                } else {
+                    return 0
+                }
+            })
+            
+            let (code, _, _) = curl.performFully()
+            guard code == 0 else {
+                throw Exception.InvalidFile
+            }
+            curl_slist_free_all(headers)
+        }
     }
 }
 
